@@ -1,6 +1,6 @@
 //============================================================================================================================
 //cart
-var cart=[];
+// var cart=[];
 var Item=function(name,price,quantity)
 {
     this.name=name;
@@ -8,12 +8,70 @@ var Item=function(name,price,quantity)
     this.quantity=quantity;
     return this;
 }
+
+function saveCart(){
+    localStorage.setItem("myCart",JSON.stringify(cart));
+}
+function loadCart(){
+   cart = JSON.parse(localStorage.getItem("myCart"));
+   return cart;
+}
+
+window.onload=function(){
+    var cartValue = loadCart();
+    if( cartValue == null){
+        cart = [] ;
+    }
+    document.getElementById("cartcount").innerHTML="("+cart.length+")";
+    refreshCart();
+}
+function refreshCart()
+{
+     for(var i=0;i<cart.length;i++)
+    {
+       for(var j=1;j<=18;j++)
+       {
+           var name=document.getElementById("name_"+j).innerHTML;
+           if(cart[i].name==name)
+           {
+              document.getElementById("quantity_"+j).value=cart[i].quantity;
+              document.getElementById("buttonAdd_"+j).style.display="none";
+              document.getElementById("buttonRemove_"+j).style.display="block"; 
+              break;
+           }
+           
+       }
+    }
+}
+// $(document).ready(function(){
+//     $("a.shoppinglink").one("click",function()
+//     {
+//                 var userlogin=document.getElementById("cartlogin");
+//                 var category=document.getElementById("categories");
+//                 var vegetables=document.getElementById("vegetables_section");
+//                 var slider=document.getElementById("sliderwindow");
+//                 var fruits=document.getElementById("fruits_section");
+//                 var dairy=document.getElementById("dairy_section");
+//                 var grocery=document.getElementById("grocery_section");
+//                 var orderbtn=document.getElementById("placeorder");
+//                 orderbtn.style.display="none";
+//                 grocery.style.display="none";
+//                 dairy.style.display="none";
+//                 vegetables.style.display="none";
+//                 slider.style.display="none";
+//                 fruits.style.display="none";
+//                 category.style.display="none";
+//                 userlogin.style.display="block";
+
+//     });
+// });
+
 //============================================================================================================================
 //add quantity function
 
 function additem(b,q)
 {
-    console.log(b,q);
+    // console.log(b,q);
     var btnid=document.getElementById('plus_'+b);
     var initialqty=document.getElementById('quantity_'+q);
     var finalqty=parseInt(initialqty.value)+1;
@@ -92,6 +150,10 @@ function addItemToCart(name,price,quantity,btnid)
         var item=new Item(n,cost,count);
         // console.log(item);
         cart.push(item);
+        // cart=localStorage.getItem("myCart");
+        sessionStorage.setItem('cart', JSON.stringify(cart));
+        var saveSession = JSON.parse(sessionStorage.getItem('cart'));
+        console.log(saveSession);
         saveCart();
         var buttonMyCart = document.getElementById('cartcount');
         buttonMyCart.innerHTML = "(" + cart.length + ")";
@@ -105,7 +167,7 @@ function addItemToCart(name,price,quantity,btnid)
     }
         
 }
-console.log(cart);
+// console.log(cart);
 
 
 document.getElementById("buttonAdd_1").addEventListener("click",function(){ addItemToCart('name_1','price_1','quantity_1',1); });
@@ -138,6 +200,10 @@ function removeItemFromCart(name,btnid)
         {
             //console.log(cart[i]);
             cart.splice(i,1);
+            // cart=localStorage.getItem("myCart");
+            sessionStorage.setItem('cart', JSON.stringify(cart));
+             var saveSession = JSON.parse(sessionStorage.getItem('cart'));
+             console.log(saveSession);
             saveCart();
             break;
         }
@@ -200,7 +266,10 @@ function countCart()
 //Reset quantity of products
  function resetqty()
 {
-    document.getElementsByClassName('qty').value=0;
+    var inputArray = document.getElementsByClassName('qty');
+    for(var i=0;i<inputArray.length;i++){
+        inputArray[i].value = 0;
+    }
 }
 
 //============================================================================================================================
@@ -233,6 +302,16 @@ function showinCart()
         clearbutton.addEventListener("click",function(){
             clearCart();
             resetqty();
+           var add= document.getElementsByClassName("addbutton");
+           for(var i=0; i<add.length;i++)
+           {
+               add[i].style.display="block";
+           }
+            var rmv= document.getElementsByClassName("rmvbutton");
+           for(var i=0; i<rmv.length;i++)
+           {
+               rmv[i].style.display="none";
+           }
             // document.location.href="index.html";
         var cartcount = document.getElementById('cartcount');
         cartcount.innerHTML = "(" + 0 + ")";
@@ -359,12 +438,6 @@ document.getElementById("cartcount").addEventListener("click",function(){
     }
 });
 
-function saveCart(){
-    localStorage.setItem("myCart",JSON.stringify(cart));
-}
-function loadCart(){
-   cart=JSON.parse(localStorage.getItem("myCart"));
-}
 
 //==================================Login Form Script===============================================================================
 
@@ -438,6 +511,7 @@ function loadUsers(){
             logout.innerHTML="Logout";
             mydiv.appendChild(logout);
             logout.addEventListener("click",function(){
+                clearCart();
                 document.location.href="index.html";
             });
             document.getElementById("loginerrormsg").innerHTML="Login Successful";
@@ -528,7 +602,26 @@ var currentDiv = document.getElementById("div1");
 
         currentDiv.style.display = "none";
         div.style.display = "block";
-
         currentDiv = div;
 }
 
+document.getElementById("userlogin").addEventListener("click",function(){
+            var userlogin=document.getElementById("cartlogin");
+            var category=document.getElementById("categories");
+            var vegetables=document.getElementById("vegetables_section");
+            var slider=document.getElementById("sliderwindow");
+            var fruits=document.getElementById("fruits_section");
+            var dairy=document.getElementById("dairy_section");
+            var grocery=document.getElementById("grocery_section");
+            var orderbtn=document.getElementById("placeorder");
+            orderbtn.style.display="none";
+            // clearbutton.style.display="none";
+            grocery.style.display="none";
+            dairy.style.display="none";
+            vegetables.style.display="none";
+            slider.style.display="none";
+            fruits.style.display="none";
+            category.style.display="none";
+            userlogin.style.display="block";
+
+});
